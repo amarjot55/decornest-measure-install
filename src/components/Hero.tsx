@@ -1,4 +1,5 @@
 import { ArrowRight, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const Hero = () => {
@@ -25,10 +26,12 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-wrap gap-4">
-              <Button size="lg" className="bg-gradient-hero hover:opacity-90 transition-opacity">
-                Explore Collection
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+              <Link to="/products">
+                <Button size="lg" className="bg-gradient-hero hover:opacity-90 transition-opacity">
+                  Explore Collection
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
               <Button size="lg" variant="outline" className="border-2">
                 Book Free Consultation
               </Button>
