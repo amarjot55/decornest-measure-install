@@ -1,3 +1,4 @@
+import { useShop } from "@/contexts/ShopContext";
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Heart, ShoppingCart, Ruler, Check } from "lucide-react";
@@ -14,6 +15,7 @@ import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 
 const ProductDetail = () => {
+  const { wishlist, toggleWishlist } = useShop();
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
@@ -260,8 +262,9 @@ const ProductDetail = () => {
               >
                 Add to Cart
               </Button>
-              <Button size="lg" variant="outline" className="px-6">
-                <Heart className="h-5 w-5" />
+              <Button size="lg" variant="outline" className="px-6" aria-label="Save to wishlist"
+                onClick={() => { const added = toggleWishlist(product.id); toast.success(added ? "Saved to wishlist" : "Removed from wishlist"); }}>
+                <Heart className={`h-5 w-5 ${wishlist.includes(product.id) ? "fill-red-500 text-red-500" : ""}`} />
               </Button>
             </div>
           </div>

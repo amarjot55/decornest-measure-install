@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, CreditCard, MapPin, Truck, Wrench } from "lucide-react";
 import Navbar from "@/components/Navbar";
@@ -12,17 +12,20 @@ import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useCart } from "@/contexts/CartContext";
+import { useShop } from "@/contexts/ShopContext";
 import { toast } from "sonner";
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { cart, cartTotal, clearCart } = useCart();
+  const { user, placeOrder, login, updateProfile } = useShop();
   const [step, setStep] = useState(1);
+  const [placed, setPlaced] = useState(false);
   
   // Shipping info
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [fullName, setFullName] = useState(user?.name ?? "");
+  const [email, setEmail] = useState(user?.email ?? "");
+  const [phone, setPhone] = useState(user?.phone ?? "");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -59,16 +62,32 @@ const Checkout = () => {
       return;
     }
 
-    // Mock order placement
-    toast.success("Order placed successfully!");
+    if (!/^\d{6}$/.test(pincode.trim())) {
+      toast.error("Please enter a valid 6-digit pincode");
+      return;
+    }
+
+    // Guest checkout creates a local demo account from the shipping details.
+    if (!user) { login(email, fullName); setTimeout(() => updateProfile({ phone }), 0); }
+    const order = placeOrder({
+      items: cart,
+      total,
+      shippingAddress: `${address}, ${city}, ${state} ${pincode}`,
+      measurementDate: needMeasurement ? measurementDate : undefined,
+      installationDate: needInstallation ? installationDate : undefined,
+      notes: serviceNotes,
+    });
+    setPlaced(true);
+    toast.success(`Order ${order.id} placed successfully!`);
     clearCart();
     navigate("/dashboard/orders");
   };
 
-  if (cart.length === 0) {
-    navigate("/cart");
-    return null;
-  }
+  useEffect(() => {
+    if (cart.length === 0 && !placed) navigate("/cart");
+  }, [cart.length, placed, navigate]);
+
+  if (cart.length === 0) return null;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -181,7 +200,7 @@ const Checkout = () => {
                     </div>
                   </div>
 
-                  <Button onClick={() => setStep(2)} size="lg" className="w-full mt-6">
+                  <Button onClick={() => { if (!fullName || !email || !phone || !address || !city || !state || !pincode) { toast.error("Please fill all shipping details"); return; } setStep(2); }} size="lg" className="w-full mt-6">
                     Continue to Services
                   </Button>
                 </CardContent>

@@ -1,8 +1,11 @@
+import { useState } from "react";
+import ConsultationDialog from "@/components/ConsultationDialog";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const Hero = () => {
+  const [consultOpen, setConsultOpen] = useState(false);
   return (
     <section className="relative overflow-hidden bg-gradient-subtle py-20 lg:py-32">
       <div className="container mx-auto px-4 lg:px-8">
@@ -32,9 +35,10 @@ const Hero = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="border-2">
+              <Button size="lg" variant="outline" className="border-2" onClick={() => setConsultOpen(true)}>
                 Book Free Consultation
               </Button>
+              <ConsultationDialog open={consultOpen} onOpenChange={setConsultOpen} />
             </div>
 
             {/* Stats */}

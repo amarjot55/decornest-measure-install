@@ -1,4 +1,6 @@
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { toast } from "sonner";
+import { Link } from "react-router-dom";
+import { Mail, Phone, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -18,27 +20,16 @@ const Footer = () => {
             <p className="text-sm text-background/70 mb-4">
               Transform your space into a beautiful haven with our premium décor solutions.
             </p>
-            <div className="flex gap-2">
-              <Button size="icon" variant="secondary" className="rounded-full">
-                <Facebook className="h-4 w-4" />
-              </Button>
-              <Button size="icon" variant="secondary" className="rounded-full">
-                <Instagram className="h-4 w-4" />
-              </Button>
-              <Button size="icon" variant="secondary" className="rounded-full">
-                <Twitter className="h-4 w-4" />
-              </Button>
-            </div>
           </div>
 
           {/* Quick Links */}
           <div>
             <h3 className="font-bold text-lg mb-4">Quick Links</h3>
             <ul className="space-y-2 text-sm text-background/70">
-              <li><a href="#" className="hover:text-background transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-background transition-colors">Our Story</a></li>
-              <li><a href="#" className="hover:text-background transition-colors">Careers</a></li>
-              <li><a href="#" className="hover:text-background transition-colors">Blog</a></li>
+              <li><Link to="/help/about" className="hover:text-background transition-colors">About Us</Link></li>
+              <li><Link to="/help/story" className="hover:text-background transition-colors">Our Story</Link></li>
+              <li><Link to="/help/careers" className="hover:text-background transition-colors">Careers</Link></li>
+              <li><Link to="/help/blog" className="hover:text-background transition-colors">Blog</Link></li>
             </ul>
           </div>
 
@@ -46,10 +37,10 @@ const Footer = () => {
           <div>
             <h3 className="font-bold text-lg mb-4">Customer Service</h3>
             <ul className="space-y-2 text-sm text-background/70">
-              <li><a href="#" className="hover:text-background transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-background transition-colors">Returns & Refunds</a></li>
-              <li><a href="#" className="hover:text-background transition-colors">Shipping Info</a></li>
-              <li><a href="#" className="hover:text-background transition-colors">Track Order</a></li>
+              <li><Link to="/help/help" className="hover:text-background transition-colors">Help Center</Link></li>
+              <li><Link to="/help/returns" className="hover:text-background transition-colors">Returns & Refunds</Link></li>
+              <li><Link to="/help/shipping" className="hover:text-background transition-colors">Shipping Info</Link></li>
+              <li><Link to="/help/track" className="hover:text-background transition-colors">Track Order</Link></li>
             </ul>
           </div>
 
@@ -70,13 +61,14 @@ const Footer = () => {
                 <span>Mumbai, Maharashtra, India</span>
               </div>
             </div>
-            <div className="flex gap-2">
+            <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); const f = e.currentTarget; const v = (f.elements.namedItem("email") as HTMLInputElement).value; if (!/\S+@\S+\.\S+/.test(v)) { toast.error("Enter a valid email"); return; } toast.success("Subscribed! Watch your inbox for décor ideas."); f.reset(); }}>
               <Input 
+                name="email"
                 placeholder="Your email" 
                 className="bg-background/10 border-background/20 text-background placeholder:text-background/50"
               />
-              <Button variant="secondary">Subscribe</Button>
-            </div>
+              <Button type="submit" variant="secondary">Subscribe</Button>
+            </form>
           </div>
         </div>
 

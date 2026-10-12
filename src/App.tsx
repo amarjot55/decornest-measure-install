@@ -11,12 +11,15 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import HelpPage from "./pages/HelpPage";
+import { ShopProvider } from "./contexts/ShopContext";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <ShopProvider>
     <CartProvider>
       <TooltipProvider>
         <Toaster />
@@ -31,12 +34,14 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/dashboard/:tab" element={<Dashboard />} />
+            <Route path="/help/:slug" element={<HelpPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </CartProvider>
+    </ShopProvider>
   </QueryClientProvider>
 );
 

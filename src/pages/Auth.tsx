@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useShop } from "@/contexts/ShopContext";
 import { Mail, Lock, User, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,18 +16,30 @@ const Auth = () => {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
 
+  const navigate = useNavigate();
+  const { login, demoLogin } = useShop();
+
+  // Demo mode: any email/password signs in locally; nothing is sent to a server.
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login
+    if (loginPassword.length < 6) { toast.error("Password must be at least 6 characters"); return; }
+    login(loginEmail);
     toast.success("Logged in successfully!");
-    window.location.href = "/dashboard";
+    navigate("/dashboard");
   };
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock signup
+    if (signupPassword.length < 6) { toast.error("Password must be at least 6 characters"); return; }
+    login(signupEmail, signupName);
     toast.success("Account created successfully!");
-    window.location.href = "/dashboard";
+    navigate("/dashboard");
+  };
+
+  const handleDemo = () => {
+    demoLogin();
+    toast.success("Logged in to the demo account");
+    navigate("/dashboard");
   };
 
   return (
@@ -98,14 +111,17 @@ const Auth = () => {
                   </div>
 
                   <div className="flex items-center justify-between text-sm">
-                    <a href="#" className="text-primary hover:underline">
+                    <button type="button" className="text-primary hover:underline" onClick={() => toast.info(loginEmail ? `Reset link sent to ${loginEmail} (demo)` : "Enter your email first")}>
                       Forgot password?
-                    </a>
+                    </button>
                   </div>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="flex flex-col gap-2">
                   <Button type="submit" size="lg" className="w-full bg-gradient-hero hover:opacity-90">
                     Log In
+                  </Button>
+                  <Button type="button" variant="outline" size="lg" className="w-full" onClick={handleDemo}>
+                    One-click demo account
                   </Button>
                 </CardFooter>
               </form>
@@ -172,13 +188,13 @@ const Auth = () => {
 
                   <p className="text-xs text-muted-foreground">
                     By signing up, you agree to our{" "}
-                    <a href="#" className="text-primary hover:underline">
+                    <Link to="/help/terms" className="text-primary hover:underline">
                       Terms of Service
-                    </a>{" "}
+                    </Link>{" "}
                     and{" "}
-                    <a href="#" className="text-primary hover:underline">
+                    <Link to="/help/privacy" className="text-primary hover:underline">
                       Privacy Policy
-                    </a>
+                    </Link>
                   </p>
                 </CardContent>
                 <CardFooter>

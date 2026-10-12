@@ -1,3 +1,5 @@
+import { useShop } from "@/contexts/ShopContext";
+import { toast } from "sonner";
 import { Heart, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -44,6 +46,7 @@ const products = [
 ];
 
 const FeaturedProducts = () => {
+  const { wishlist, toggleWishlist } = useShop();
   return (
     <section id="products" className="py-20 bg-secondary/30">
       <div className="container mx-auto px-4 lg:px-8">
@@ -73,9 +76,11 @@ const FeaturedProducts = () => {
                     <Button 
                       size="icon" 
                       variant="secondary"
-                      className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity rounded-full shadow-lg"
+                      aria-label="Save to wishlist"
+                      className="absolute top-3 right-3 rounded-full shadow-lg"
+                      onClick={(e) => { e.preventDefault(); const added = toggleWishlist(String(product.id)); toast.success(added ? "Saved to wishlist" : "Removed from wishlist"); }}
                     >
-                      <Heart className="h-4 w-4" />
+                      <Heart className={`h-4 w-4 ${wishlist.includes(String(product.id)) ? "fill-red-500 text-red-500" : ""}`} />
                     </Button>
                   </div>
                 </CardContent>

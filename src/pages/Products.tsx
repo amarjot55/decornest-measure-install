@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Filter, SlidersHorizontal } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -17,6 +17,8 @@ const Products = () => {
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("featured");
   const [showFilters, setShowFilters] = useState(true);
+  const [params, setParams] = useSearchParams();
+  const query = (params.get("q") ?? "").toLowerCase();
 
   // Get unique colors and styles
   const allColors = Array.from(new Set(mockProducts.flatMap(p => p.colors)));
@@ -24,7 +26,8 @@ const Products = () => {
 
   // Filter products
   let filteredProducts = mockProducts.filter(p => 
-    selectedCategory === "all" || p.category === selectedCategory
+    (selectedCategory === "all" || p.category === selectedCategory) &&
+    (!query || `${p.name} ${p.description} ${p.category} ${p.materials.join(" ")}`.toLowerCase().includes(query))
   );
 
   if (selectedColors.length > 0) {
@@ -181,7 +184,7 @@ const Products = () => {
                   Filters
                 </Button>
                 <p className="text-sm text-muted-foreground">
-                  {filteredProducts.length} products found
+                  {filteredProducts.length} products found{query && <> for “{params.get("q")}” <button type="button" className="text-primary underline ml-1" onClick={() => setParams({})}>clear</button></>}
                 </p>
               </div>
 
@@ -257,6 +260,7 @@ const Products = () => {
                     setSelectedCategory("all");
                     setSelectedColors([]);
                     setSelectedStyles([]);
+                    setParams({});
                   }}
                 >
                   Clear All Filters
